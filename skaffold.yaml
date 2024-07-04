@@ -1,0 +1,67 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+    # This is telling skaffold that there is a collection of different config files intended for kubernetes inside this directory. 
+    # We are telling skaffold that we want it to watch all these yaml files. 
+    # Aynytime we make a change to one of these  yaml files, skaffold is going to automatically reapply that config file to our kubernetes cluster.
+    # It will save us from the hassle of having to run "kubectl -f apply" over and over again anytime we create a file or make a change to a file. 
+    # By listing out the "manifests" skaffold is also going to make sure to create all these listed under it or apply these any tim that we start skaffold.
+    # Its also going to delete all the config or all the objects associated with these config files whenever we stop skaffold as well (delete it)
+  rawYaml:
+    - ./infro/k8s/* 
+build:
+  local:
+  # By default whenever skaffold makes a change to an image or rebuilds it, it's going to try to push the image up to docker hub but that is not actuallly required when using skaffold so we disable that setting here.
+    push: false
+  # This (artifacts) tells skaffold about something inside of our project that it needs to maintain.
+  # We are essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+  # Whenever something changes inside this directory skaffold is going to try to take those changes and update our pod.
+  artifacts:
+    - image: sumaiyamohamed/client # ont use tags
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+    - image: sumaiyamohamed/comments
+      context: comments
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js' # name
+            dest: .  # Where it's located.
+    - image: sumaiyamohamed/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: sumaiyamohamed/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: sumaiyamohamed/posts
+      context: posts
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: sumaiyamohamed/query
+      context: query
+      docker: 
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .  

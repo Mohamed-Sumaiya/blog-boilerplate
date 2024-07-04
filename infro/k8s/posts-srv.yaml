@@ -1,0 +1,15 @@
+apiVersion : v1
+kind: Service
+metadata:
+  name: posts-srv
+spec:
+  type: NodePort
+  selector:
+    app: posts # We are telling the service to find the pod(s) that has a label of posts.
+  # You can always use the ports section as is for different services but just change the port and targetPort numbers and the name obviosly.
+  ports:    # List out all the different ports that we want to expose on the pod which in this case would be the port the posts service is listening on.
+    - name: posts
+      protocol: TCP
+      # Port and targetPort do not have to be identical.
+      port: 4000  # This will be the port the service will be on.
+      targetPort: 4000 # Actual port that our application is listening for traffic on.

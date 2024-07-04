@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-bus-depl
+spec:
+  replicas: 1 #the number of pods that we want to create running some particular image.
+  selector: #find all the pods with the label posts
+    matchLabels:
+      app: event-bus #label
+  template: #configuration that we want to apply to the pod.
+    metadata:
+      labels:
+        app: event-bus # Identifier for the pod that will be created.
+    spec:
+      containers:
+        - name: event-bus
+          image: sumaiyamohamed/event-bus:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus-srv
+spec:
+  selector:
+    app: event-bus
+  type: ClusterIP # If we don not add a type then kubernetes will default to creating a cluster IP service for us, added it for learning purposes.
+  ports:
+    - name: event-bus
+      protocol: TCP
+      port: 4005
+      targetPort: 4005

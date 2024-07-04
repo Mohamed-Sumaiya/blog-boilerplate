@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-depl
+spec:
+  replicas: 1 #the number of pods that we want to create running some particular image.
+  selector: #find all the pods with the label posts
+    matchLabels:
+      app: posts #label
+  template: #configuration that we want to apply to the pod.
+    metadata:
+      labels:
+        app: posts # Identifier for the pod that will be created.
+    spec:
+      containers:
+        - name: posts
+          image: sumaiyamohamed/posts:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-clusterip-srv
+spec:
+  selector:
+    app: posts
+  type: ClusterIP # If we don not add a type then kubernetes will default to creating a cluster IP service for us, added it for learning purposes.
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
